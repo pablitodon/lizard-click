@@ -1,5 +1,5 @@
 import { Telegraf, Markup } from "telegraf";
-import { createServer } from "http"; // Встроенный модуль Node.js
+import { createServer } from "http";
 
 const token = process.env.TOKEN;
 const webAppUrl = process.env.WEB_APP_URL;
@@ -11,7 +11,10 @@ bot.command("start", (context) => {
   context.reply(
     "Welcome to the Lizzard Clicker!Press to start App",
     Markup.inlineKeyboard([
-      Markup.button.webApp("Open mini App", `${webAppUrl}?ref=${ctx.from.id}`),
+      Markup.button.webApp(
+        "Open mini App",
+        `${webAppUrl}?ref=${context.from.id}`
+      ),
     ])
   );
 });
