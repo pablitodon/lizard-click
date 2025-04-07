@@ -4,10 +4,10 @@
   "version": "1.0.0",
   "main": "app.js",
   "license": "MIT",
-  "scripts": {
-    "start": "node app.js"
-  },
-
+"scripts": {
+  "start": "node app.js",
+  "build": "echo 'No build needed' && exit 0"
+},
   "dependencies": {
     "telegraf": "^4.16.3"
   }
