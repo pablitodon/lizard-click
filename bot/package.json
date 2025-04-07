@@ -1,0 +1,14 @@
+{
+  "name": "bot",
+  "type": "module",
+  "version": "1.0.0",
+  "main": "app.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node app.js"
+  },
+
+  "dependencies": {
+    "telegraf": "^4.16.3"
+  }
+}
