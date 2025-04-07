@@ -1,6 +1,6 @@
 import { Telegraf, Markup } from "telegraf";
 const token = process.env.TOKEN;
-const webAppUrl = process.env.APP_URL;
+const webAppUrl = process.env.WEB_APP_URL;
 
 const bot = new Telegraf(token);
 
