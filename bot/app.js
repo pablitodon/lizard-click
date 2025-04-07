@@ -3,13 +3,13 @@ import { createServer } from "http";
 
 const token = process.env.TOKEN;
 const webAppUrl = process.env.WEB_APP_URL;
-const PORT = 3000;
+const PORT = process.env.PORT;
 
 const bot = new Telegraf(token);
 
 bot.command("start", (context) => {
   context.reply(
-    "Welcome to the Lizzard Clicker!Press to start App",
+    "Welcome to the Lizzard Clicker! Press to start App",
     Markup.inlineKeyboard([
       Markup.button.webApp(
         "Open mini App",
@@ -19,20 +19,27 @@ bot.command("start", (context) => {
   );
 });
 
-bot.launch();
-
-// Минимальный HTTP-сервер для Render
-createServer((req, res) => {
+const server = createServer((req, res) => {
   res.writeHead(200, { "Content-Type": "text/plain" });
   res.end("Bot is running");
-}).listen(PORT, () => {
+});
+
+server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
   bot
     .launch()
     .then(() => console.log("Bot started"))
-    .catch((err) => console.error("Bot launch failed:", err));
+    .catch((err) => {
+      console.error("Bot launch failed:", err);
+      process.exit(1);
+    });
 });
 
-// Обработка завершения
-process.once("SIGINT", () => bot.stop("SIGINT"));
-process.once("SIGTERM", () => bot.stop("SIGTERM"));
+process.once("SIGINT", () => {
+  bot.stop("SIGINT");
+  server.close();
+});
+process.once("SIGTERM", () => {
+  bot.stop("SIGTERM");
+  server.close();
+});
