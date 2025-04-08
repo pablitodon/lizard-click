@@ -1,5 +1,4 @@
 import { Telegraf, Markup } from "telegraf";
-import { createServer } from "http";
 
 const token = process.env.TOKEN;
 const webAppUrl = process.env.WEB_APP_URL;
@@ -19,27 +18,4 @@ bot.command("start", (context) => {
   );
 });
 
-const server = createServer((req, res) => {
-  res.writeHead(200, { "Content-Type": "text/plain" });
-  res.end("Bot is running");
-});
-
-server.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-  bot
-    .launch()
-    .then(() => console.log("Bot started"))
-    .catch((err) => {
-      console.error("Bot launch failed:", err);
-      process.exit(1);
-    });
-});
-
-process.once("SIGINT", () => {
-  bot.stop("SIGINT");
-  server.close();
-});
-process.once("SIGTERM", () => {
-  bot.stop("SIGTERM");
-  server.close();
-});
+bot.launch();
