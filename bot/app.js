@@ -1,10 +1,12 @@
+import express from "express";
 import { Telegraf, Markup } from "telegraf";
 
 const token = process.env.TOKEN;
 const webAppUrl = process.env.WEB_APP_URL;
-const PORT = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 const bot = new Telegraf(token);
+const app = express();
 
 bot.command("start", (context) => {
   context.reply(
@@ -18,4 +20,7 @@ bot.command("start", (context) => {
   );
 });
 
-bot.launch();
+app.use(bot.webhookCallback("/"));
+bot.telegram.setWebhook(`${webAppUrl}`);
+
+app.listen(port);
