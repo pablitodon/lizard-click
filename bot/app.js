@@ -1,49 +1,45 @@
 import { Telegraf, Markup } from "telegraf";
-import http from "http";
+import express from "express";
 
 const token = process.env.TOKEN;
 const webAppUrl = process.env.WEB_APP_URL;
 const port = process.env.PORT || 3000;
 
 const bot = new Telegraf(token);
+const app = express();
+
+// Middleware для парсинга JSON
+app.use(express.json());
 
 // Обработчик команды /start
-bot.command("start", (context) => {
-  context.reply(
-    "Welcome to the Lizzard Clicker! Press to start App",
+bot.command("start", (ctx) => {
+  ctx.reply(
+    "Welcome to the Lizard Clicker! Press to start App",
     Markup.inlineKeyboard([
-      Markup.button.webApp(
-        "Open mini App",
-        `${webAppUrl}?ref=${context.from.id}`
-      ),
+      Markup.button.webApp("Open mini App", `${webAppUrl}?ref=${ctx.from.id}`),
     ])
   );
 });
 
 // В production используем webhook
 if (process.env.NODE_ENV === "production") {
-  // Создаем HTTP сервер
-  const server = http.createServer((req, res) => {
-    // Health check endpoint
-    if (req.url === "/" && req.method === "GET") {
-      res.writeHead(200);
-      return res.end("Bot is running");
-    }
-
-    // Обработка других запросов
-    res.writeHead(404);
-    res.end();
+  // Проверка работоспособности
+  app.get("/", (req, res) => {
+    res.status(200).send("Bot is running");
   });
 
   // Настраиваем вебхук
   bot.telegram.setWebhook(`${process.env.RENDER_EXTERNAL_URL}/webhook`);
 
-  // Привязываем обработчик Telegraf к серверу
-  bot.webhookCallback("/webhook")(server);
+  // Обработчик вебхука
+  app.post("/webhook", (req, res) => {
+    return bot.webhookCallback("/webhook")(req, res);
+  });
 
   // Запускаем сервер
-  server.listen(port, "0.0.0.0", () => {
+  app.listen(port, "0.0.0.0", () => {
     console.log(`Server running on port ${port}`);
+    console.log(`Webhook URL: ${process.env.RENDER_EXTERNAL_URL}/webhook`);
   });
 } else {
   // В development используем polling
