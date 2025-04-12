@@ -27,7 +27,7 @@ import { onMounted } from "vue";
 
 const { tg } = useTelegram();
 const app = useAppStore();
-console.log(app);
+
 
 onMounted(() => {
   app.fetchTasks();
